@@ -73,122 +73,269 @@
 
 ### 🔐 Autenticazione e Autorizzazione
 
+#### 📋 OBBLIGATORI (Core System)
 ```bash
-# Sistema auth completo con 2FA
+# Autenticazione moderna senza Blade views
 composer require laravel/fortify
-composer require pragmarx/google2fa-laravel
+# Sistema ruoli e permessi granulare  
 composer require spatie/laravel-permission
+# API authentication per PWA e future app mobile
 composer require laravel/sanctum
+```
 
-# Per multi-tenancy (multi-sede)
+**Cosa fanno:**
+- **Fortify**: Gestisce login/logout/register senza UI predefinita, perfetto con Inertia
+- **Spatie Permission**: Crea ruoli (admin, cassiere, cuoco) e permessi specifici (edit-menu, view-reports)
+- **Sanctum**: Genera token API sicuri, essenziale per PWA e autenticazione SPA
+
+#### 🎯 OPZIONALI (Features Extra)
+```bash
+# SE vuoi 2FA con Google Authenticator (raccomandato per admin)
+composer require pragmarx/google2fa-laravel
+
+# SE hai catene/franchising con più sedi separate
 composer require spatie/laravel-multitenancy
 ```
 
-**Funzionalità coperte:**
-- Login sicuro con 2FA
-- Gestione ruoli granulari (admin, cassiere, cuoco, rider, manager)
-- Multi-sede con isolamento dati
-- API tokens per app mobile future
+**Quando installarli:**
+- **Google2FA**: Solo se il cliente ha più di 1 admin o gestisce dati sensibili
+- **Multitenancy**: Solo per catene con sedi che non devono vedere dati tra loro
+
+#### 🔄 ALTERNATIVE (Scegli UNA opzione)
+```bash
+# OPZIONE A: Auth starter semplice (per prototipo veloce)
+composer require laravel/breeze
+
+# OPZIONE B: Auth completo con team management
+composer require laravel/jetstream  
+
+# OPZIONE C: Solo API (se frontend completamente separato)
+# Usa solo Sanctum senza Fortify
+```
+
+**Differenze:**
+- **Breeze**: Minimale, solo login/register, buono per MVP rapido
+- **Jetstream**: Include team, 2FA nativo, sessioni multiple - più complesso
+- **Fortify**: Via di mezzo, flessibile, **RACCOMANDATO** per il nostro progetto
 
 ### 🍽️ Gestione Ristorante Core
 
+#### 📋 OBBLIGATORI (Sistema Base)
 ```bash
-# CRUD avanzato e media management
+# Admin panel moderno per gestire menu, utenti, configurazioni
 composer require filament/filament
+# Upload e gestione immagini piatti con thumbnails automatici
 composer require spatie/laravel-medialibrary
+# Log di tutte le operazioni critiche (chi ha fatto cosa quando)
 composer require spatie/laravel-activitylog
+```
+
+**Cosa fanno:**
+- **Filament**: Crea automaticamente interfacce admin per menu, utenti, tavoli. Come WordPress admin ma per Laravel
+- **Media Library**: Carica foto piatti, crea automaticamente thumbnail, ottimizza dimensioni
+- **Activity Log**: Traccia ogni modifica (Mario ha cambiato prezzo pizza alle 14:30), essenziale per controllo gestione
+
+#### 🎯 OPZIONALI (Features Avanzate)  
+```bash
+# SE hai ordini con stati complessi (preparazione, cottura, pronto, servito)
 composer require spatie/laravel-model-status
 
-# Gestione geografica (sedi, delivery)
+# SE hai delivery o più sedi geografiche
 composer require grimzy/laravel-mysql-spatial
 composer require spatie/geocoder
 ```
 
-**Funzionalità coperte:**
-- Pannello admin completo con Filament
-- Gestione immagini ottimizzate per menu
-- Log completo di tutte le operazioni
-- Stati avanzati per ordini e tavoli
-- Geolocalizzazione per delivery
+**Quando installarli:**
+- **Model Status**: Se vuoi tracking preciso stati comande (utile per KDS avanzato)
+- **MySQL Spatial + Geocoder**: Solo se hai delivery con zone geografiche o calcoli distanze
+
+#### 🔄 ALTERNATIVE Admin Panel
+```bash
+# OPZIONE A: Filament (RACCOMANDATO) - Gratuito, moderno
+composer require filament/filament
+
+# OPZIONE B: Laravel Nova - A pagamento €199/dev, più potente
+composer require laravel/nova
+
+# OPZIONE C: Voyager - Gratuito, meno moderno
+composer require tcg/voyager
+```
+
+**Differenze:**
+- **Filament**: Gratuito, design moderno, perfetto per questo progetto
+- **Nova**: Potentissimo ma costoso, per progetti enterprise
+- **Voyager**: Gratuito ma design datato
 
 ### 📊 Import/Export e Reporting
 
+#### 📋 OBBLIGATORI (Funzioni Base)
 ```bash
-# Excel e reporting avanzato
+# Import/export Excel per menu, clienti, inventario
 composer require maatwebsite/excel
+# Generazione PDF per comande, fatture, report
 composer require spatie/laravel-pdf
-composer require consoletvs/charts
+# Backup automatici database ogni notte
 composer require spatie/laravel-backup
+```
 
-# Analisi e metriche
+**Cosa fanno:**
+- **Laravel Excel**: Importa listini fornitori Excel, esporta report vendite. Gestisce milioni di righe
+- **Laravel PDF**: Stampa comande cucina, fatture clienti, report giornalieri in PDF
+- **Laravel Backup**: Salva database automaticamente su cloud, evita perdite dati
+
+#### 🎯 OPZIONALI (Analytics Avanzati)
+```bash
+# SE vuoi grafici interattivi vendite nel tempo
+composer require consoletvs/charts
+
+# SE hai già Google Analytics e vuoi dati nel gestionale
 composer require spatie/laravel-analytics
+
+# SE vuoi monitorare performance sistema in real-time
 composer require spatie/laravel-tail
 ```
 
-**Funzionalità coperte:**
-- Import/export menu, clienti, inventario
-- Report PDF automatici
-- Grafici interattivi vendite
-- Backup automatici
-- Monitoraggio real-time applicazione
+**Quando installarli:**
+- **Charts**: Solo se il cliente vuole dashboard con grafici belli
+- **Laravel Analytics**: Se il ristorante ha sito web con Google Analytics
+- **Laravel Tail**: Per debugging avanzato, non per utenti finali
 
 ### 💳 Pagamenti e Fatturazione
 
+#### 📋 OBBLIGATORI (Base Italia)
 ```bash
-# Gateway pagamenti multipli
-composer require laravel/cashier-stripe
-composer require omnipay/omnipay
-composer require srmklive/paypal
-composer require square/square
-
-# Fatturazione elettronica Italia
+# Fatturazione elettronica automatica (obbligo di legge Italia)
 composer require deved/laravel-fatture-in-cloud
-composer require creadigme/laravel-fattureincloud-v2
-composer require italia/spid-laravel
 ```
 
-**Funzionalità coperte:**
-- Stripe, PayPal, Square integration
-- Split payments per tavoli
-- Fatturazione elettronica automatica
-- Integrazione SPID per clienti B2B
+**Cosa fa:**
+- **FattureInCloud**: Genera XML fatture, invia al Sistema di Interscambio automaticamente. Obbligo legale per tutte le attività
+
+#### 🔄 ALTERNATIVE Pagamenti (Scegli UNO o più)
+```bash
+# OPZIONE A: Stripe (RACCOMANDATO) - Più facile, commissioni ok
+composer require laravel/cashier-stripe
+
+# OPZIONE B: PayPal - Clienti che preferiscono PayPal
+composer require srmklive/paypal
+
+# OPZIONE C: Multiple gateway - Supporta tutto ma più complesso
+composer require omnipay/omnipay
+
+# OPZIONE D: Square - Buono per POS fisici
+composer require square/square
+```
+
+**Differenze pagamenti:**
+- **Cashier Stripe**: Più semplice da integrare, commissioni 1.4% + €0.25, perfetto per carte
+- **PayPal**: Commissioni simili, alcuni clienti preferiscono, più complesso
+- **Omnipay**: Supporta 100+ gateway ma richiede più codice
+- **Square**: Ottimo se hanno già POS Square fisico
+
+#### 🎯 OPZIONALI (Compliance Avanzata)
+```bash
+# SE vuoi integrare SPID per clienti business
+composer require italia/spid-laravel
+
+# SE vuoi fatturazione avanzata con più provider
+composer require creadigme/laravel-fattureincloud-v2
+```
+
+**Quando installarli:**
+- **SPID Laravel**: Solo per ristoranti che fatturano ad aziende/PA
+- **FattureInCloud V2**: Se il cliente ha già account FattureInCloud Pro
 
 ### 🚀 Real-time e Performance
 
+#### 📋 OBBLIGATORI (Core Real-time)
 ```bash
-# WebSockets nativi Laravel 12
+# WebSockets nativi Laravel 12 per KDS real-time
 composer require laravel/reverb
-composer require pusher/pusher-php-server
-
-# Cache e performance
-composer require spatie/laravel-responsecache
+# Cache intelligente per performance
+composer require spatie/laravel-responsecache  
+# API ottimizzate con filtri automatici
 composer require spatie/laravel-query-builder
+```
+
+**Cosa fanno:**
+- **Laravel Reverb**: Sostituisce Pusher, WebSockets gratuiti. KDS si aggiorna istantaneamente quando arriva ordine
+- **Response Cache**: Salva in cache menu, prezzi. Pagina si carica in 50ms invece di 500ms
+- **Query Builder**: API automatiche per mobile app future. `/api/piatti?filter[categoria]=pizze&sort=-prezzo`
+
+#### 🎯 OPZIONALI (Performance Avanzate)
+```bash
+# SE vuoi serializzazione API professionale
 composer require spatie/laravel-fractal
+
+# SE hai problemi performance in sviluppo
 composer require barryvdh/laravel-debugbar --dev
 ```
 
-**Funzionalità coperte:**
-- KDS real-time senza dipendenze esterne
-- Cache intelligente
-- API ottimizzate con filtri avanzati
-- Debug tools per sviluppo
+**Quando installarli:**
+- **Fractal**: Solo se costruisci API per app mobile esterne
+- **Debugbar**: Solo in sviluppo, per trovare query lente
+
+#### 🔄 ALTERNATIVE WebSockets 
+```bash
+# OPZIONE A: Laravel Reverb (RACCOMANDATO) - Gratis, nativo Laravel 12
+composer require laravel/reverb
+
+# OPZIONE B: Pusher - A pagamento €7/mese, più affidabile per produzione
+composer require pusher/pusher-php-server
+
+# OPZIONE C: Socket.IO + Redis - Gratis ma più complesso setup
+# Richiede server Node.js separato
+```
+
+**Differenze WebSockets:**
+- **Reverb**: Gratuito, semplice, perfetto per iniziare
+- **Pusher**: A pagamento ma rock-solid per produzione con tanti utenti
+- **Socket.IO**: Potentissimo ma richiede DevOps skills
 
 ### 🤖 AI e Machine Learning
 
+#### 🎯 OPZIONALI (Tutte le AI sono extra)
 ```bash
-# OpenAI integration
+# SE vuoi ChatGPT per suggerimenti menu e analisi clienti  
 composer require openai-php/laravel
+
+# SE preferisci Claude per conversazioni più naturali
 composer require anthropic-php/anthropic-php
 
-# ML e analisi predittive
+# SE vuoi ML offline per previsioni vendite (senza internet)
 composer require php-ai/php-ml
 composer require rubix/ml
 ```
 
-**Integrazioni AI:**
-- OpenAI GPT per analisi clienti e suggerimenti menu
-- Antropic Claude per conversazioni complesse
-- Machine Learning locale per previsioni vendite
+**Cosa fanno:**
+- **OpenAI Laravel**: Analizza cronologia ordini cliente, suggerisce "Mario ordina sempre Margherita il venerdì"
+- **Anthropic PHP**: Claude AI per conversazioni WhatsApp bot più naturali
+- **PHP-ML**: Machine learning offline, predice "domani venderai 50 pizze" basato su storico
+- **RubixML**: ML più avanzato per clustering clienti, previsioni stock
+
+**Quando installarli:**
+- **Fase MVP**: Nessuno - concentrati su gestionale base
+- **Fase 2**: OpenAI per suggerimenti semplici
+- **Fase 3**: Tutto per differenziazione competitiva
+
+#### 💡 Integrazione AI Vocale (Servizi Esterni)
+```bash
+# HTTP client per chiamare servizi AI vocali italiani
+composer require guzzlehttp/guzzle
+composer require symfony/http-client
+```
+
+**Provider AI Vocali Raccomandati:**
+- **Heres.ai** (Bologna): €0.15/minuto, dialetti italiani, personalizzabile
+- **Onirys.it**: Nativo VoIP SIP, €0.12/minuto, perfetto per centralini
+- **Spitch.ai**: Enterprise, €0.20/minuto, multilingue
+
+**Come funziona:**
+1. Cliente chiama ristorante
+2. Centralino gira chiamata a servizio AI
+3. AI capisce "vorrei 2 margherite per le 20:00"
+4. AI chiama tue API Laravel per creare ordine
+5. Staff vede ordine nel gestionale
 
 ### 🎙️ AI Vocale e Telefonia
 
@@ -210,110 +357,240 @@ composer require symfony/http-client
 
 ### 📱 PWA e Funzionalità Offline
 
+#### 📋 OBBLIGATORI (PWA Base)
 ```bash
-# Service Worker e PWA
-npm install workbox-webpack-plugin
-npm install @vite-pwa/nuxt  # se usi Nuxt
+# Service Worker e app installabile
 npm install vite-plugin-pwa
+# Database locale per offline
+npm install dexie
+```
 
-# Database offline
-npm install dexie  # IndexedDB wrapper
+**Cosa fanno:**
+- **Vite Plugin PWA**: Rende l'app installabile come app nativa su qualsiasi dispositivo
+- **Dexie**: Database IndexedDB nel browser, funziona senza internet in rete LAN
+
+#### 🎯 OPZIONALI (Offline Avanzato)
+```bash
+# SE vuoi cache sofisticata con strategie multiple
+npm install workbox-webpack-plugin
+
+# SE preferisci database offline più semplice
 npm install localforage
 ```
 
-**Funzionalità coperte:**
-- App installabile su qualsiasi dispositivo
-- Funzionamento offline in rete LAN
-- Sincronizzazione automatica quando torna internet
-- Cache intelligente menu e immagini
+**Differenze offline storage:**
+- **Dexie**: Più potente, query SQL-like, gestisce relazioni complesse
+- **LocalForage**: Più semplice, perfetto per cache semplice menu/immagini
 
-*Perché questa scelta:* PWA elimina costi App Store, funziona su qualsiasi dispositivo, e garantisce operatività anche con problemi di rete.
+**Come funziona offline:**
+1. **Online**: Tutto sincronizzato con server Laravel
+2. **Offline**: App usa database locale, salva operazioni in coda
+3. **Ritorna online**: Sincronizza automaticamente tutte le modifiche
 
 ### 🚚 Delivery e Logistica
 
+#### 🎯 OPZIONALI (Solo se hai delivery)
 ```bash
-# Mapping e geolocalizzazione
-composer require geocoder-php/google-maps-provider
-composer require geocoder-php/here-provider
+# SE hai delivery con calcolo percorsi
 composer require spatie/laravel-google-maps
+composer require geocoder-php/google-maps-provider
 
-# Algoritmi di routing
+# SE vuoi ottimizzazione percorsi multipli
 composer require graphp/algorithms
 npm install @mapbox/polyline
 ```
 
-**Funzionalità coperte:**
-- Calcolo percorsi ottimali per rider
-- Tracking real-time consegne
-- Zone di delivery dinamiche
-- Stima tempi consegna AI-powered
+**Cosa fanno:**
+- **Laravel Google Maps**: Calcola distanze, stima tempi consegna, crea zone delivery
+- **Geocoder**: Trasforma "Via Roma 123" in coordinate GPS per tracking
+- **Graph Algorithms**: Ottimizza percorso rider con più consegne (Problema Commesso Viaggiatore)
 
-*Perché questa scelta:* Google Maps ha dati più accurati in Italia, Spatie package ben mantenuto, algoritmi graph per ottimizzazione route multiple.
+**Quando installarli:**
+- **Mai in MVP** - concentrati su asporto
+- **Fase 2** - se il cliente vuole delivery
+
+#### 🔄 ALTERNATIVE Mappe
+```bash
+# OPZIONE A: Google Maps (RACCOMANDATO) - Più preciso in Italia
+composer require spatie/laravel-google-maps
+
+# OPZIONE B: OpenStreetMap - Gratuito ma meno preciso
+composer require geocoder-php/nominatim-provider  
+
+# OPZIONE C: Here Maps - Alternativa premium
+composer require geocoder-php/here-provider
+```
+
+**Costi mappe:**
+- **Google Maps**: €5 per 1000 calcoli percorso
+- **OpenStreetMap**: Gratuito ma meno traffic data
+- **Here**: €4 per 1000 richieste, buono per Europa
 
 ### 📞 Comunicazioni e Notifiche
 
+#### 📋 OBBLIGATORI (Notifiche Base)
 ```bash
-# Notifiche multi-canale
-composer require laravel/slack-notification-channel
-composer require laravel-notification-channels/telegram
-composer require twilio/sdk
-
-# WhatsApp Business
-composer require netflie/whatsapp-cloud-api
-composer require ultramsg/whatsapp-php-sdk
+# Sistema notifiche Laravel nativo multi-canale
+# Incluso in Laravel - nessun package extra necessario
 ```
 
-**Canali supportati:**
-- SMS per clienti e rider
-- WhatsApp per ordini e conferme
-- Telegram per staff interno
-- Email per report giornalieri
-- Push notifications nella PWA
+**Cosa include Laravel:**
+- Email notifications per report giornalieri
+- Database notifications per alert interni
+- Broadcast notifications per real-time UI
 
-*Perché questa scelta:* Multi-canale garantisce raggiungibilità, WhatsApp Business API ufficiale per compliance, Telegram ottimo per comunicazioni staff.
-
-### 🔄 Sincronizzazione e Code
-
+#### 🎯 OPZIONALI (Canali Extra)
 ```bash
-# Queue e job processing
-composer require laravel/horizon
-composer require spatie/laravel-queue-monitor
-composer require pusher/pusher-php-server
+# SE vuoi SMS per clienti e rider
+composer require twilio/sdk
 
-# Background processing
+# SE vuoi WhatsApp Business ufficiale
+composer require netflie/whatsapp-cloud-api
+
+# SE vuoi Telegram per staff interno
+composer require laravel-notification-channels/telegram
+
+# SE vuoi Slack per team di gestione
+composer require laravel/slack-notification-channel
+```
+
+**Quando installarli:**
+- **MVP**: Solo email Laravel nativo
+- **Fase 2**: WhatsApp per clienti (molto richiesto in Italia)  
+- **Fase 3**: SMS per emergenze, Telegram per staff
+
+**Costi comunicazioni:**
+- **Twilio SMS**: €0.08 per SMS in Italia
+- **WhatsApp Business**: €0.0045 per messaggio
+- **Telegram**: Gratuito per bot
+- **Email**: Gratuito con server SMTP
+
+#### 🔄 ALTERNATIVE WhatsApp
+```bash
+# OPZIONE A: WhatsApp Cloud API (RACCOMANDATO) - Ufficiale Meta
+composer require netflie/whatsapp-cloud-api
+
+# OPZIONE B: UltraMsg - Più semplice ma meno affidabile  
+composer require ultramsg/whatsapp-php-sdk
+
+# OPZIONE C: Twilio WhatsApp - Tramite Twilio, più costoso
+# Usa Twilio SDK con WhatsApp channel
+```
+
+**Differenze WhatsApp:**
+- **Cloud API**: Ufficiale Meta, più affidabile, richiede verifica business
+- **UltraMsg**: Setup in 5 minuti ma può essere bloccato
+- **Twilio**: Enterprise grade ma costa 3x di più
+
+### 🔄 Code e Job Processing
+
+#### 📋 OBBLIGATORI (Sistema Code)
+```bash
+# Monitoraggio code con UI bellissima
+composer require laravel/horizon
+# Tracciamento job per debugging
+composer require spatie/laravel-queue-monitor
+```
+
+**Cosa fanno:**
+- **Laravel Horizon**: Dashboard per vedere code in tempo reale, job falliti, retry automatici
+- **Queue Monitor**: Traccia ogni job (invio email, processo AI vocale) con tempi di esecuzione
+
+**Perché servono le code:**
+- Invio email non blocca l'ordine (3 secondi → istantaneo)
+- AI vocale processa in background (30 secondi non bloccano UI)
+- Report pesanti generati di notte
+
+#### 🎯 OPZIONALI (Monitoring Avanzato)
+```bash
+# SE vuoi monitoring salute sistema completo
 composer require spatie/laravel-schedule-monitor
 composer require spatie/cpu-load-health-check
 ```
 
-**Funzionalità coperte:**
-- Processamento asincrono ordini
-- Invio notifiche in background  
-- Monitoraggio salute sistema
-- Retry automatico job falliti
+**Quando installarli:**
+- **Schedule Monitor**: Se hai molti job automatici (backup, report, AI)
+- **CPU Load Health**: Solo per server ad alto carico
 
-*Perché questa scelta:* Horizon offre UI bellissima per monitoring, Spatie packages per observability completa, essenziale per operazioni real-time.
+#### ⚙️ Code Configuration Esempio:
+```php
+// config/queue.php - Setup produzione
+'redis' => [
+    'driver' => 'redis',
+    'connection' => 'default',
+    'queue' => env('REDIS_QUEUE', 'default'),
+    'retry_after' => 90,
+    'block_for' => null,
+]
+
+// Job priority examples:
+dispatch(new InviaOrdineACucina($ordine))->onQueue('high');    // Priorità alta
+dispatch(new AnalizzaChiamataAI($audio))->onQueue('default'); // Normale  
+dispatch(new GeneraReportGiornaliero())->onQueue('low');      // Bassa
+```
 
 ### 🧪 Testing e Qualità Codice
 
+#### 📋 OBBLIGATORI (Testing Base)
 ```bash
-# Testing completo
+# Framework testing moderno (alternativa a PHPUnit)
 composer require pestphp/pest --dev
+# Browser testing per flussi critici  
 composer require laravel/dusk --dev
-composer require spatie/laravel-ray --dev
-
-# Code quality
-composer require nunomaduro/phpinsights --dev
-composer require phpstan/phpstan --dev
-composer require squizlabs/php_codesniffer --dev
 ```
 
-**Copertura testing:**
-- Unit test per logica business
-- Feature test per API endpoints
-- Browser test per flussi critici (ordini, pagamenti)
-- Performance test per carico simultaneo
+**Cosa fanno:**
+- **Pest**: Scrive test più leggibili `it('can create pizza order')` invece di `testCanCreatePizzaOrder()`
+- **Laravel Dusk**: Testa automaticamente "utente fa login → crea ordine → ordine arriva in cucina"
 
-*Perché questa scelta:* Pest più moderno di PHPUnit, Dusk per test end-to-end, Ray per debugging avanzato, PHPInsights per metriche qualità.
+**Test essenziali da scrivere:**
+- Creazione ordini non perde dati
+- Calcolo totale sempre corretto
+- KDS riceve ordini in tempo reale
+- Backup automatici funzionano
+
+#### 🎯 OPZIONALI (Qualità Avanzata)  
+```bash
+# SE vuoi debugging avanzato con Ray
+composer require spatie/laravel-ray --dev
+
+# SE vuoi analisi qualità codice automatica
+composer require nunomaduro/phpinsights --dev
+composer require phpstan/phpstan --dev
+```
+
+**Quando installarli:**
+- **Ray**: Solo se fai debugging complesso (alternative gratis: dd(), dump())
+- **PHPInsights**: Se lavori in team, mantiene standard codice
+- **PHPStan**: Trova errori prima che vadano in produzione
+
+#### 🔄 ALTERNATIVE Testing
+```bash
+# OPZIONE A: Pest (RACCOMANDATO) - Sintassi moderna
+composer require pestphp/pest --dev
+
+# OPZIONE B: PHPUnit - Classico Laravel, più verboso  
+# Incluso in Laravel di default
+
+# OPZIONE C: Codeception - Potente ma complesso setup
+composer require codeception/codeception --dev
+```
+
+**Perché Pest:**
+```php
+// Pest (moderno)
+it('calcola totale ordine correttamente', function () {
+    $ordine = Ordine::factory()->create();
+    expect($ordine->totale)->toBe(25.50);
+});
+
+// PHPUnit (verboso)
+public function test_calcola_totale_ordine_correttamente()
+{
+    $ordine = Ordine::factory()->create();
+    $this->assertEquals(25.50, $ordine->totale);
+}
+```
 
 ---
 
